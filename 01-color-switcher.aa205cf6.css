@@ -1,0 +1,2 @@
+body{background-color:#fffaf0}.container{justify-content:center;align-items:center;padding:0 15px;display:flex;position:absolute;top:60%;left:50%;transform:translate(-50%,-50%)}button{width:120px;color:#fff;background-color:#4d5ae5;border:1px solid #000;border-radius:5px;padding:12px;font-size:20px;transition:transform .5s ease-in-out;box-shadow:3px 3px 5px #000000bf}button:hover:enabled{cursor:pointer;background-color:#2f39a8;transform:scale(1.05)}button[data-start]{margin-right:15px}
+/*# sourceMappingURL=01-color-switcher.aa205cf6.css.map */
