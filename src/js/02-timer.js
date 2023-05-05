@@ -7,6 +7,7 @@ import {
   calculateTimeDifference,
   addLeadingZero,
   addResultToInterface,
+  changeTimerValueStyle,
   startTimer,
 } from './functions/functions-timer';
 
@@ -22,11 +23,16 @@ const options = {
     ];
   },
 };
-const defaultDate = options.defaultDate;
-refs.start_timer_btn.disabled = !variables.isButtonDisabled;
 
 flatpickr('input#datetime-picker', options);
 
+const defaultDate = options.defaultDate;
+refs.start_timer_btn.disabled = !variables.isButtonDisabled;
+
 refs.start_timer_btn.addEventListener('click', () => {
-  startTimer(addLeadingZero, addResultToInterface);
+  startTimer({
+    zero: addLeadingZero,
+    result: addResultToInterface,
+    style: changeTimerValueStyle,
+  });
 });

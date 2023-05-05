@@ -77,9 +77,27 @@ button:hover:enabled {
     text-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.75);
 }
 
+.value.active {
+    animation: fadeInAnimation ease-in-out 0.9s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
 .label {
     font-size: 24px;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.75);
+}
+
+@keyframes fadeInAnimation {
+    100% {
+        opacity: 1;
+        transform: scale(1.0);
+    }
+
+    0% {
+        opacity: 0;
+        transform: scale(1.3);
+    }
 }

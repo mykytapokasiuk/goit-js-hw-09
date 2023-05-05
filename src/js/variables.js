@@ -3,7 +3,8 @@ const variables = {
   changeColorIntervalId: null,
   time_difference: 0,
   time_object: null,
-  formatted_time: null,
+  formatted_time: [],
+  timer_interval_id: 0,
 };
 
 export { variables };

@@ -3,6 +3,7 @@ import { variables } from '../variables';
 import { Report } from 'notiflix';
 /**
  * Generates random color
+ * @function getRandomHexColor
  * @returns {string} String in hex format
  */
 function getRandomHexColor() {
@@ -15,6 +16,7 @@ function getRandomHexColor() {
  */
 /**
  * Changes background color
+ * @function startChangeBgColor
  * @param {callback} callback
  * @param {HTMLElement} target
  */
@@ -27,6 +29,7 @@ const startChangeBgColor = (callback, target) => {
 };
 /**
  * Stops changing background color
+ * @function stopChangeBgColor
  */
 const stopChangeBgColor = () => {
   refs.start_color_change_btn.disabled = variables.isButtonDisabled;
@@ -36,6 +39,7 @@ const stopChangeBgColor = () => {
 };
 /**
  * Shows modal window with info about application
+ * @function showInfoMessage
  */
 const showInfoMessage = () => {
   Report.info(
@@ -52,6 +56,7 @@ const showInfoMessage = () => {
 };
 /**
  * Shows a thank you modal window
+ * @function showThxMessage
  */
 function showThxMessage() {
   Report.success('Thanks for watching!', '', 'Okay', {

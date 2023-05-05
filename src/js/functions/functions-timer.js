@@ -1,11 +1,13 @@
 import { refs } from '../references';
 import { variables } from '../variables';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
 /**
  * Converts milliseconds to days, hours, minutes, seconds
+ * @function convertMs
  * @param {number} ms
- * @returns {object}
+ * @returns {object} Object with days, hours, minutes, seconds
  */
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -27,10 +29,13 @@ function convertMs(ms) {
 }
 /**
  * Checks if the correct date is set(shows notifications), locks/unlocks the timer start button
+ * @function checkDate
  * @param {object} data
  * @param {object} date
  */
 const checkDate = (data, date) => {
+  //? this.defaultDate from the options object doesn't work in this function... WHY?
+  //? It works after saving this.defaultDate in a global variable (const defaultDate = options.defaultDate)
   data > date
     ? (refs.start_timer_btn.disabled = variables.isButtonDisabled)
     : (Notify.failure('Please choose a date in the future', {
@@ -47,6 +52,7 @@ const checkDate = (data, date) => {
 };
 /**
  * Calculates difference in milliseconds between selected date and default date
+ * @function calculateTimeDifference
  * @param {object} data
  * @param {object} date
  */
@@ -55,6 +61,7 @@ const calculateTimeDifference = (data, date) => {
 };
 /**
  * Adds 0 to the beginning if the number has less than two characters
+ * @function addLeadingZero
  * @param {object} value
  */
 function addLeadingZero(value) {
@@ -67,6 +74,7 @@ function addLeadingZero(value) {
 }
 /**
  * Adds initial timer values
+ * @function addResultToInterface
  * @param {array} array
  */
 const addResultToInterface = array => {
@@ -75,20 +83,45 @@ const addResultToInterface = array => {
   });
 };
 /**
- * @callback callback
+ * Changes timer second styles every 900ms, stops timer, shows modal window after timer stops
+ * @function changeTimerValueStyle
  */
-/**
+const changeTimerValueStyle = () => {
+  refs.span_timer_elements[3].classList.toggle('active');
+  //? Is it normal practice to use setTimeOut to change styles?
+  //?
+  setTimeout(() => {
+    refs.span_timer_elements[3].classList.toggle('active');
+  }, 900);
+  if (variables.time_difference <= 1000) {
+    clearInterval(variables.timer_interval_id);
+    setTimeout(() => {
+      Report.success(
+        'Thanks for watching!',
+        'Want to see the timer again? Just reload the page! ',
+        'Okay',
+        {
+          width: '450px',
+          titleFontSize: '24px',
+          messageFontSize: '18px',
+        }
+      );
+    }, 1500);
+  }
+};
 /**
  * Starts a timer
- * @param {callback} zero 
- * @param {callback} result 
+ * @function startTimer
+ * @param {object} functions
  */
-const startTimer = (zero, result) => {
-  setInterval(() => {
+const startTimer = functions => {
+  const { zero, result, style } = functions;
+  variables.timer_interval_id = setInterval(() => {
     variables.time_difference -= 1000;
     variables.time_object = convertMs(variables.time_difference);
     zero(variables.time_object);
     result(variables.formatted_time);
+    style();
   }, 1000);
   refs.start_timer_btn.disabled = !variables.isButtonDisabled;
   refs.input_timer_element.disabled = !variables.isButtonDisabled;
@@ -99,5 +132,6 @@ export {
   calculateTimeDifference,
   addLeadingZero,
   addResultToInterface,
+  changeTimerValueStyle,
   startTimer,
 };
