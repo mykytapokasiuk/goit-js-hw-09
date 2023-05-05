@@ -1,5 +1,5 @@
-import { refs } from './references';
-import { variables } from './variables';
+import { refs } from '../references';
+import { variables } from '../variables';
 import { Report } from 'notiflix';
 /**
  * Generates random color
@@ -44,8 +44,8 @@ const showInfoMessage = () => {
     'Okay',
     {
       width: '350px',
-      titleFontSize: '22px',
-      messageFontSize: '18px',
+      titleFontSize: '24px',
+      messageFontSize: '20px',
     }
   );
   window.removeEventListener('load', showInfoMessage);
@@ -56,7 +56,7 @@ const showInfoMessage = () => {
 function showThxMessage() {
   Report.success('Thanks for watching!', '', 'Okay', {
     width: '350px',
-    titleFontSize: '22px',
+    titleFontSize: '24px',
   });
 }
 export {

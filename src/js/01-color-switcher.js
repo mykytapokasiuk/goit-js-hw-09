@@ -3,7 +3,7 @@ import {
   startChangeBgColor,
   stopChangeBgColor,
   showInfoMessage,
-} from './functions';
+} from './functions/functions-color-switcher.js';
 import { refs } from './references';
 import { variables } from './variables';
 
