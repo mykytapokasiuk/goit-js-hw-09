@@ -1,6 +1,9 @@
 import { refs } from '../references';
 import { variables } from '../variables';
 import { Report } from 'notiflix';
+
+const { start_color_change_btn, stop_color_change_btn } = refs;
+let { isButtonDisabled, changeColorIntervalId } = variables;
 /**
  * Generates random color
  * @function getRandomHexColor
@@ -21,21 +24,27 @@ function getRandomHexColor() {
  * @param {HTMLElement} target
  */
 const startChangeBgColor = (callback, target) => {
-  refs.start_color_change_btn.disabled = !variables.isButtonDisabled;
-  refs.stop_color_change_btn.disabled = variables.isButtonDisabled;
-  variables.changeColorIntervalId = setInterval(() => {
+  start_color_change_btn.disabled = !isButtonDisabled;
+  stop_color_change_btn.disabled = isButtonDisabled;
+  changeColorIntervalId = setInterval(() => {
     target.style.backgroundColor = callback();
   }, 1000);
 };
 /**
+ * @callback callback
+ */
+/**
  * Stops changing background color
  * @function stopChangeBgColor
+ * @param {callback} callback
  */
-const stopChangeBgColor = () => {
-  refs.start_color_change_btn.disabled = variables.isButtonDisabled;
-  refs.stop_color_change_btn.disabled = !variables.isButtonDisabled;
-  clearInterval(variables.changeColorIntervalId);
-  showThxMessage();
+const stopChangeBgColor = callback => {
+  start_color_change_btn.disabled = isButtonDisabled;
+  stop_color_change_btn.disabled = !isButtonDisabled;
+  clearInterval(changeColorIntervalId);
+  setTimeout(() => {
+    callback();
+  }, 1500);
 };
 /**
  * Shows modal window with info about application
@@ -69,4 +78,5 @@ export {
   startChangeBgColor,
   stopChangeBgColor,
   showInfoMessage,
+  showThxMessage,
 };

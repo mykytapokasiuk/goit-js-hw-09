@@ -16,6 +16,7 @@ const options = {
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
+  disableMobile: true,
   onClose(selectedDates) {
     [
       checkDate(selectedDates[0], defaultDate),
@@ -31,8 +32,8 @@ refs.start_timer_btn.disabled = !variables.isButtonDisabled;
 
 refs.start_timer_btn.addEventListener('click', () => {
   startTimer({
-    zero: addLeadingZero,
-    result: addResultToInterface,
-    style: changeTimerValueStyle,
+    addZero: addLeadingZero,
+    showResult: addResultToInterface,
+    changeStyle: changeTimerValueStyle,
   });
 });
