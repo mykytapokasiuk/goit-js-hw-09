@@ -5,6 +5,8 @@ const refs = {
   start_timer_btn: document.querySelector('[data-start]'),
   input_timer_element: document.getElementById('datetime-picker'),
   span_timer_elements: document.querySelectorAll('.value'),
+  prs_form_element: document.querySelector('.form'),
+  prs_submit_btn: document.querySelector('button'),
 };
 
 export { refs };
