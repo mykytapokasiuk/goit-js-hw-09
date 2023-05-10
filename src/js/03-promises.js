@@ -1,4 +1,4 @@
-import { refs } from './references';
+import Refs from './references';
 import { onSubmit } from './functions/functions-promises';
 
 /**
@@ -27,6 +27,6 @@ function createPromise(position, delay) {
   });
 }
 
-refs.prs_form_element.addEventListener('submit', event => {
+Refs.prs_form_element.addEventListener('submit', event => {
   onSubmit(event, createPromise);
 });

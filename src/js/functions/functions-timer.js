@@ -1,16 +1,8 @@
-import { refs } from '../references';
-import { variables } from '../variables';
+import Refs from '../references';
+import Vars from '../variables';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 
-const { start_timer_btn, input_timer_element, span_timer_elements } = refs;
-let {
-  time_difference,
-  time_object,
-  formatted_time,
-  timer_interval_id,
-  isButtonDisabled,
-} = variables;
 /**
  * Converts milliseconds to days, hours, minutes, seconds
  * @function convertMs
@@ -36,86 +28,89 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 /**
- * Checks if the correct date is set(shows notifications), locks/unlocks the timer start button
+ * Checks if the correct date is set(shows notifications),
+ * updates default_date if time between checks exceeds 1 minute or more,
+ * locks/unlocks the timer start and reset buttons
  * @function checkDate
- * @param {object} data
- * @param {object} date
+ * @param {object} selected_date
+ * @param {object} default_date
  */
-const checkDate = (data, date) => {
-  //? this.defaultDate from the options object doesn't work in this function... WHY?
-  //? It works after saving this.defaultDate in a global variable (const defaultDate = options.defaultDate)
-  data > date
-    ? (start_timer_btn.disabled = isButtonDisabled)
-    : (Notify.failure('Please choose a date in the future', {
-        width: '260px',
-        showOnlyTheLastOne: true,
-        position: 'right-bottom',
-        distance: '40px',
-        timeout: 2000,
-        fontSize: '15px',
-        borderRadius: '8px',
-        cssAnimationStyle: 'from-bottom',
-      }),
-      (start_timer_btn.disabled = !isButtonDisabled));
-};
-/**
- * Calculates difference in milliseconds between selected date and default date
- * @function calculateTimeDifference
- * @param {object} data
- * @param {object} date
- */
-const calculateTimeDifference = (data, date) => {
-  time_difference = data - date;
-};
-/**
- * Adds 0 to the beginning if the number has less than two characters
- * @function addLeadingZero
- * @param {object} value
- */
-function addLeadingZero(value) {
-  const arrayOfFormattedData = [],
-    keys = Object.keys(value);
-  for (const key of keys) {
-    arrayOfFormattedData.push(value[key].toString().padStart(2, 0));
+const checkDate = (selected_date, default_date) => {
+  default_date = new Date();
+  if (
+    selected_date < default_date ||
+    ((selected_date - default_date) / 1000).toFixed(3) < 10
+  ) {
+    Notify.failure('Please choose a date in the future', {
+      width: '260px',
+      showOnlyTheLastOne: true,
+      position: 'right-bottom',
+      distance: '40px',
+      timeout: 2000,
+      fontSize: '15px',
+      borderRadius: '8px',
+      cssAnimationStyle: 'from-bottom',
+    });
+  } else {
+    Refs.start_timer_btn.disabled = Vars.isButtonDisabled;
+    Refs.reset_timer_btn.disabled = Vars.isButtonDisabled;
   }
-  formatted_time = arrayOfFormattedData;
-}
-/**
- * Adds initial timer values
- * @function addResultToInterface
- * @param {array} array
- */
-const addResultToInterface = array => {
-  span_timer_elements.forEach((element, i) => {
-    element.textContent = array[i];
-  });
 };
 /**
- * Changes timer second styles every 900ms, stops timer, shows modal window after timer stops
- * @function changeTimerValueStyle
+ * @callback callback
  */
-const changeTimerValueStyle = () => {
-  span_timer_elements[3].classList.toggle('active');
-  //? Is it normal practice to use setTimeOut to change styles?
-  //?
-  setTimeout(() => {
-    span_timer_elements[3].classList.toggle('active');
-  }, 900);
-  if (time_difference <= 1000) {
-    clearInterval(timer_interval_id);
+/**
+ * Calculates difference between user selected date and current date,
+ * stops timer, shows modal window after timer stops
+ * @function calculateTimeDifference
+ * @param {object} value
+ * @param {callback} callback
+ */
+function calculateTimeDifference(value, callback) {
+  const currentDate = Date.now();
+  Vars.time_difference = value - currentDate;
+  Vars.formatted_time = callback(Vars.time_difference);
+
+  if (currentDate >= Vars.user_selected_date - 1000) {
+    clearInterval(Vars.timer_interval_id);
     setTimeout(() => {
       Report.success(
         'Thanks for watching!',
-        'Want to see the timer again? Just reload the page! ',
+        'Want to see the timer again? Just choose a new date!',
         'Okay',
+        () => {
+          document.location.reload();
+        },
         {
           width: '450px',
           titleFontSize: '24px',
           messageFontSize: '18px',
         }
       );
-    }, 1500);
+    }, 1200);
   }
+}
+/**
+ * Adds timer values to interface, adds 0 to the beginning if the number has less than two characters
+ * @function addLeadingZero
+ * @param {object} formatted_time
+ */
+const addLeadingZero = formatted_time => {
+  const { days, hours, minutes, seconds } = formatted_time;
+  Refs.data_days_element.textContent = days.toString().padStart(2, 0);
+  Refs.data_hours_element.textContent = hours.toString().padStart(2, 0);
+  Refs.data_minutes_element.textContent = minutes.toString().padStart(2, 0);
+  Refs.data_seconds_element.textContent = seconds.toString().padStart(2, 0);
+};
+/**
+ * Changes timer second styles every 900ms
+ * @function changeTimerValueStyle
+ */
+const changeTimerValueStyle = () => {
+  Refs.data_seconds_element.classList.toggle('active');
+  setTimeout(() => {
+    Refs.data_seconds_element.classList.toggle('active');
+  }, 900);
 };
 /**
  * Starts a timer
@@ -123,23 +118,34 @@ const changeTimerValueStyle = () => {
  * @param {object} functions
  */
 const startTimer = functions => {
-  const { addZero, showResult, changeStyle } = functions;
-  timer_interval_id = setInterval(() => {
-    time_difference -= 1000;
-    time_object = convertMs(time_difference);
-    addZero(time_object);
-    showResult(formatted_time);
+  const { calculateDiff, addZero, changeStyle } = functions;
+  Vars.timer_interval_id = setInterval(() => {
+    calculateDiff(Vars.user_selected_date, convertMs);
+    addZero(Vars.formatted_time);
     changeStyle();
   }, 1000);
-  start_timer_btn.disabled = !isButtonDisabled;
-  input_timer_element.disabled = !isButtonDisabled;
+  Refs.start_timer_btn.disabled = !Vars.isButtonDisabled;
+  Refs.input_timer_element.disabled = !Vars.isButtonDisabled;
+};
+/**
+ * Resets timer
+ * @function resetTimer
+ */
+const resetTimer = () => {
+  Refs.input_timer_element.classList.toggle('animation');
+  setTimeout(() => {
+    Refs.input_timer_element.classList.toggle('animation');
+  }, 1000);
+  setTimeout(() => {
+    document.location.reload();
+  }, 800);
 };
 
-export {
+export default {
   checkDate,
   calculateTimeDifference,
   addLeadingZero,
-  addResultToInterface,
   changeTimerValueStyle,
   startTimer,
+  resetTimer,
 };

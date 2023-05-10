@@ -1,10 +1,8 @@
-const variables = {
+export default {
   isButtonDisabled: false,
   changeColorIntervalId: null,
+  user_selected_date: null,
   time_difference: 0,
-  time_object: null,
-  formatted_time: [],
+  formatted_time: null,
   timer_interval_id: 0,
 };
-
-export { variables };

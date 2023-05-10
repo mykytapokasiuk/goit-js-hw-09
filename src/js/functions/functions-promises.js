@@ -27,11 +27,12 @@ const onSubmit = (event, callback) => {
     });
     return;
   }
-  for (let i = 1, j = 0; i <= amount.value; i++, j += ~~step.value) {
-    let totalDelay = ~~delay.value + j;
+  let totalDelay = ~~delay.value;
+
+  for (let i = 0; i < amount.value; i++) {
     callback(i, totalDelay)
       .then(({ position, delay }) => {
-        Notify.success(`Fulfilled promise ${position} in ${delay}ms`, {
+        Notify.success(`Fulfilled promise ${position + 1} in ${delay}ms`, {
           width: '260px',
           position: 'right-top',
           distance: '40px',
@@ -40,7 +41,7 @@ const onSubmit = (event, callback) => {
         });
       })
       .catch(({ position, delay }) => {
-        Notify.failure(`Rejected promise ${position} in ${delay}ms`, {
+        Notify.failure(`Rejected promise ${position + 1} in ${delay}ms`, {
           width: '260px',
           position: 'right-top',
           distance: '40px',
@@ -48,6 +49,7 @@ const onSubmit = (event, callback) => {
           borderRadius: '8px',
         });
       });
+    totalDelay += ~~step.value;
   }
 };
 

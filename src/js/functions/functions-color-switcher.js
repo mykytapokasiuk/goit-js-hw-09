@@ -1,9 +1,7 @@
-import { refs } from '../references';
-import { variables } from '../variables';
+import Refs from '../references';
+import Vars from '../variables';
 import { Report } from 'notiflix';
 
-const { start_color_change_btn, stop_color_change_btn } = refs;
-let { isButtonDisabled, changeColorIntervalId } = variables;
 /**
  * Generates random color
  * @function getRandomHexColor
@@ -24,9 +22,9 @@ function getRandomHexColor() {
  * @param {HTMLElement} target
  */
 const startChangeBgColor = (callback, target) => {
-  start_color_change_btn.disabled = !isButtonDisabled;
-  stop_color_change_btn.disabled = isButtonDisabled;
-  changeColorIntervalId = setInterval(() => {
+  Refs.start_color_change_btn.disabled = !Vars.isButtonDisabled;
+  Refs.stop_color_change_btn.disabled = Vars.isButtonDisabled;
+  Vars.changeColorIntervalId = setInterval(() => {
     target.style.backgroundColor = callback();
   }, 1000);
 };
@@ -39,9 +37,9 @@ const startChangeBgColor = (callback, target) => {
  * @param {callback} callback
  */
 const stopChangeBgColor = callback => {
-  start_color_change_btn.disabled = isButtonDisabled;
-  stop_color_change_btn.disabled = !isButtonDisabled;
-  clearInterval(changeColorIntervalId);
+  Refs.start_color_change_btn.disabled = Vars.isButtonDisabled;
+  Refs.stop_color_change_btn.disabled = !Vars.isButtonDisabled;
+  clearInterval(Vars.changeColorIntervalId);
   setTimeout(() => {
     callback();
   }, 1500);
